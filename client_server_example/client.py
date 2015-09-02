@@ -24,7 +24,7 @@
 
 import socket
 import errno
-
+import time
 """
 Setting HOST to localhost 
 for now...
@@ -42,29 +42,31 @@ errorcode = -10
 """
 Try to connect to the host
 """
-try:
-    s.connect((HOST, PORT))
-    """
-    If the host isn't present,
-    handle the error gracefully
-    """
-except socket.error, v:
-    errorcode=v[0]
-    """
-    Check if an error occurred,
-    Carry on if everything is fine
-    """
-finally:
-    if errorcode==errno.ECONNREFUSED:
+print "Trying to connect to server..."
+while True:
+    try:
+        s.connect((HOST, PORT))
+        errorcode=-10
         """
-        We'll have to actually handle
-        this a lot better in the future
-        but oh well
+        If the host isn't present,
+        handle the error gracefully
         """
-        print "No connection to server established..."
-        print "be sure to run server script first!"
-        exit(0)
-    
+    except socket.error, v:
+        errorcode=v[0]
+        """
+        Check if an error occurred,
+        Carry on if everything is fine
+        """
+    finally:
+        if errorcode==errno.ECONNREFUSED:
+            """
+            Sleep for a moment before
+            giving it another shot
+            """
+            time.sleep(1)
+        else:
+            break
+
 s.send('Hello World from Client!')
 data = s.recv(1024)
 s.close()

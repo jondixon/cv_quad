@@ -41,6 +41,7 @@ s.bind((HOST, PORT))
 """
 Wait for the client...
 """
+print "Waiting for client to connect..."
 s.listen(1)
 conn, addr = s.accept()
 

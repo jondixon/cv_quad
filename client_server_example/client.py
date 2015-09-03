@@ -67,7 +67,11 @@ while True:
         else:
             break
 
-s.send('Hello World from Client!')
-data = s.recv(1024)
+
+
+while 1:
+    s.send('Hello World from Client!\n')
+    data = s.recv(1024)
+    if not data: break
+    print 'Received', data
 s.close()
-print 'Received', data

@@ -48,7 +48,7 @@ conn, addr = s.accept()
 """
 Send out a message
 """
-send_msg = "Hello World From Server!"
+send_msg = "Hello World From Server!\n"
 recv_msg = "none"
 
 """
@@ -63,12 +63,15 @@ while 1:
     """
     if not data: break
     recv_msg = data
-    conn.send(send_msg)
+    """
+    Verify Client Sent us a Message
+    """
+    print 'Received', recv_msg
 
-"""
-Verify Client Sent us a Message
-"""
-print 'Received', recv_msg
+    for i in range(10):
+      conn.send(send_msg)
+    break
+
 
 """
 Close the Connection

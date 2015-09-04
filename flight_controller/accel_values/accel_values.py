@@ -68,7 +68,7 @@ class accelerometer:
 
 
     def getState(self):
-        return self.x_rotation, self.y_rotation
+        return [self.x_rotation, self.y_rotation]
 
 
 if __name__ == "__main__":
@@ -78,10 +78,10 @@ if __name__ == "__main__":
 
         accelValues.readState()
 
-        x_rotation, y_rotation = accelValues.getState()
+        rotationValues = accelValues.getState()
 
-        print "x rotation: " , x_rotation 
-        print "y rotation: " , y_rotation
+        print "x rotation: " , rotationValues[0] 
+        print "y rotation: " , rotationValues[1]
 
 
     

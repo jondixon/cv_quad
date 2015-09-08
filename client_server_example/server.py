@@ -21,59 +21,65 @@
 
 import socket
 
-"""
-Setting HOST to localhost 
-for now...
-"""
-HOST = 'localhost'
-PORT = 50007
+class server:
+    def __init__(self, debug=False, host='localhost',port=50007):
+        """
+        Setting HOST to localhost 
+        for now...
+        """
+        self.DEBUG = debug
+        self.HOST = host
+        self.PORT = port
 
-"""
-Set Up Socket
-"""
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.conn = 'null'
+        self.addr = 'null'
+        """
+        Set Up Socket
+        """
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-"""
-Bind the socket to HOST
-"""
-s.bind((HOST, PORT))
+    def bind(self):
+        """
+        Bind the socket to HOST
+        """
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.bind( ( self.HOST, self.PORT ) )
 
-"""
-Wait for the client...
-"""
-print "Waiting for client to connect..."
-s.listen(1)
-conn, addr = s.accept()
+        """
+        Wait for the client...
+        """
+        print "Waiting for client to connect..."
+        self.sock.listen(1)
+        self.conn, self.addr = self.sock.accept()
+        if self.DEBUG: print 'Connected by', self.addr
 
-"""
-Send out a message
-"""
-send_msg = "Hello World From Server!\n"
-recv_msg = "none"
+    def send(self,message):
+        self.conn.send(message)
 
-"""
-Verify connection has been established
-"""
-print 'Connected by', addr
-while 1:
-    data = conn.recv(1024)
-    """
-    When Client data stream is empty,
-    communication must be complete
-    """
-    if not data: break
-    recv_msg = data
-    """
-    Verify Client Sent us a Message
-    """
-    print 'Received', recv_msg
+    def recv(self):
 
-    for i in range(10):
-      conn.send(send_msg)
-    break
+        data = self.conn.recv(1024)
+        """
+        When Client data stream is empty,
+        communication must be complete
+        """
+        if not data: return 'none'
+        recv_msg = data
+
+        """
+        Verify Client Sent us a Message
+        """
+        print 'Received', recv_msg
+        return recv_msg
 
 
-"""
-Close the Connection
-"""
-conn.close()
+    def close(self):
+        self.conn.close()
+
+if __name__ == "__main__":
+    send_msg = "Hello World From Server!\n"
+    s = server(debug=True)
+    s.bind()
+    s.recv()
+    s.send(send_msg)
+    s.close()

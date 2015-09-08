@@ -25,53 +25,77 @@
 import socket
 import errno
 import time
-"""
-Setting HOST to localhost 
-for now...
-"""
-HOST = 'localhost'
-PORT = 50007
+import Queue
 
-"""
-Set Up Socket
-"""
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-errorcode = -10
-
-"""
-Try to connect to the host
-"""
-print "Trying to connect to server..."
-while True:
-    try:
-        s.connect((HOST, PORT))
-        errorcode=-10
+class client:
+    def __init__(self, debug=False, host='localhost',port=50007):
         """
-        If the host isn't present,
-        handle the error gracefully
+        Setting HOST to localhost 
+        for now...
         """
-    except socket.error, v:
-        errorcode=v[0]
+        self.DEBUG = debug
+        self.HOST = host
+        self.PORT = port
+
+
         """
-        Check if an error occurred,
-        Carry on if everything is fine
+        Set Up Socket
         """
-    finally:
-        if errorcode==errno.ECONNREFUSED:
-            """
-            Sleep for a moment before
-            giving it another shot
-            """
-            time.sleep(1)
-        else:
-            break
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.errorcode = -10
 
 
 
-while 1:
-    s.send('Hello World from Client!\n')
-    data = s.recv(1024)
-    if not data: break
-    print 'Received', data
-s.close()
+    def connect(self):
+        """
+        Try to connect to the host
+        """
+        if self.DEBUG: print "Trying to connect to server..."
+        while True:
+
+
+            try:
+                self.sock.connect( ( self.HOST, self.PORT ) )
+                self.errorcode=-10
+                """
+                If the host isn't present,
+                handle the error gracefully
+                """
+            except socket.error, v:
+                self.errorcode=v[0]
+                """
+                Check if an error occurred,
+                Carry on if everything is fine
+                """
+            finally:
+                if self.errorcode==errno.ECONNREFUSED:
+                    """
+                    Sleep for a moment before
+                    giving it another shot
+                    """
+                    time.sleep(1)
+                else:
+                    break
+
+
+    def send(self,message):
+        self.sock.send(message)
+
+    def recv(self):
+        data = self.sock.recv(1024)
+        if self.DEBUG: print 'Received', data
+        return data
+
+    def close(self):
+        self.sock.close()
+
+if __name__ == "__main__":
+    send_msg = "Hello World From Client!\n"
+    c = client(debug=True)
+    c.connect()
+    c.send(send_msg)
+    c.recv()
+    c.close()
+    
+
+
